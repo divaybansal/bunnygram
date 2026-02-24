@@ -1,0 +1,1997 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bennygram — Stop the Villain!</title>
+  <meta name="description" content="Help lock Benny Bunny's account before he steals more passwords!" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ========== RESET & TOKENS ========== */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg-dark: #0d0d0d;
+      --bg-card: #1a1a2e;
+      --bg-input: #16213e;
+      --accent-purple: #7c3aed;
+      --accent-orange: #f97316;
+      --accent-pink: #ec4899;
+      --accent-gradient: linear-gradient(135deg, #7c3aed, #ec4899, #f97316);
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --border-color: #334155;
+      --success-green: #22c55e;
+      --error-red: #ef4444;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ========== LAYOUT ========== */
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+      position: relative;
+      background: var(--bg-dark);
+    }
+
+    .screen {
+      display: none;
+      animation: fadeIn .4s ease;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(60px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      20%,
+      60% {
+        transform: translateX(-8px);
+      }
+
+      40%,
+      80% {
+        transform: translateX(8px);
+      }
+    }
+
+    @keyframes confettiFall {
+      0% {
+        transform: translateY(-100vh) rotate(0deg);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-20px);
+      }
+    }
+
+    @keyframes glow {
+
+      0%,
+      100% {
+        box-shadow: 0 0 20px rgba(124, 58, 237, 0.4);
+      }
+
+      50% {
+        box-shadow: 0 0 40px rgba(236, 72, 153, 0.6);
+      }
+    }
+
+    /* ========== HEADER ========== */
+    .header {
+      background: linear-gradient(180deg, #1a1a2e 0%, var(--bg-dark) 100%);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 26px;
+      font-weight: 800;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+    }
+
+    .header-icons {
+      display: flex;
+      gap: 16px;
+      font-size: 22px;
+    }
+
+    .header-icon {
+      cursor: pointer;
+      transition: transform .2s;
+    }
+
+    .header-icon:hover {
+      transform: scale(1.2);
+    }
+
+    /* ========== SEARCH SCREEN ========== */
+    .search-container {
+      padding: 20px;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      background: var(--bg-input);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      gap: 12px;
+      transition: border-color .3s, box-shadow .3s;
+    }
+
+    .search-box:focus-within {
+      border-color: var(--accent-purple);
+      box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
+    }
+
+    .search-box input {
+      flex: 1;
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 16px;
+      outline: none;
+    }
+
+    .search-box input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .search-icon {
+      font-size: 20px;
+      color: var(--text-muted);
+    }
+
+    .search-hint {
+      text-align: center;
+      margin-top: 40px;
+      padding: 30px;
+      animation: slideUp .6s ease;
+    }
+
+    .search-hint .emoji {
+      font-size: 64px;
+      display: block;
+      margin-bottom: 16px;
+    }
+
+    .search-hint h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .search-hint p {
+      color: var(--text-secondary);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .mission-banner {
+      margin: 20px;
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(249, 115, 22, 0.15));
+      border: 1px solid rgba(124, 58, 237, 0.3);
+      border-radius: var(--radius);
+      text-align: center;
+      animation: glow 3s infinite;
+    }
+
+    .mission-banner h3 {
+      font-size: 18px;
+      margin-bottom: 8px;
+      color: var(--accent-orange);
+    }
+
+    .mission-banner p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Search results */
+    .search-results {
+      padding: 10px 20px;
+    }
+
+    .search-result-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px;
+      background: var(--bg-card);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background .2s, transform .2s;
+      border: 1px solid transparent;
+    }
+
+    .search-result-item:hover {
+      background: var(--bg-input);
+      transform: translateX(4px);
+      border-color: var(--accent-purple);
+    }
+
+    .search-result-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--accent-purple);
+    }
+
+    .search-result-info h4 {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .search-result-info p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .villain-badge {
+      display: inline-block;
+      background: var(--error-red);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-left: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ========== STORIES ROW ========== */
+    .stories-row {
+      display: flex;
+      gap: 16px;
+      padding: 16px 20px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .stories-row::-webkit-scrollbar {
+      display: none;
+    }
+
+    .story-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .story-ring {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      padding: 3px;
+      background: var(--accent-gradient);
+    }
+
+    .story-ring img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--bg-dark);
+    }
+
+    .story-name {
+      font-size: 11px;
+      color: var(--text-secondary);
+      max-width: 70px;
+      text-align: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* ========== FEED POST CARD ========== */
+    .feed-post {
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 12px;
+      margin-bottom: 8px;
+    }
+
+    .post-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+    }
+
+    .post-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--accent-purple);
+    }
+
+    .post-username {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .post-image {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+    }
+
+    .post-actions {
+      display: flex;
+      gap: 16px;
+      padding: 12px 16px 4px;
+      font-size: 24px;
+    }
+
+    .post-action {
+      cursor: pointer;
+      transition: transform .2s;
+    }
+
+    .post-action:hover {
+      transform: scale(1.2);
+    }
+
+    .post-likes {
+      padding: 0 16px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .post-caption {
+      padding: 4px 16px 0;
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+
+    .post-caption strong {
+      color: var(--text-primary);
+    }
+
+    /* ========== PROFILE SCREEN ========== */
+    .profile-header {
+      padding: 24px 20px;
+      text-align: center;
+    }
+
+    .profile-avatar-wrap {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 14px;
+    }
+
+    .profile-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid transparent;
+      background-origin: border-box;
+      background-clip: content-box, border-box;
+      background-image: linear-gradient(var(--bg-dark), var(--bg-dark)), var(--accent-gradient);
+    }
+
+    .profile-villain-tag {
+      position: absolute;
+      bottom: 2px;
+      right: -4px;
+      background: var(--error-red);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 12px;
+      border: 2px solid var(--bg-dark);
+    }
+
+    .profile-name {
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .profile-handle {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .profile-bio {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      max-width: 320px;
+      margin: 0 auto 16px;
+    }
+
+    .profile-stats {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      padding: 14px 0;
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      margin: 0 20px;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Personal Details Card */
+    .details-card {
+      margin: 20px;
+      padding: 20px;
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+    }
+
+    .details-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .detail-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 14px;
+    }
+
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .detail-icon {
+      font-size: 20px;
+      width: 28px;
+      text-align: center;
+    }
+
+    .detail-label {
+      color: var(--text-muted);
+      min-width: 90px;
+    }
+
+    .detail-value {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    /* Lock Account Button */
+    .lock-btn {
+      display: block;
+      width: calc(100% - 40px);
+      margin: 20px auto;
+      padding: 16px;
+      font-size: 17px;
+      font-weight: 700;
+      font-family: inherit;
+      color: white;
+      background: var(--accent-gradient);
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s;
+      animation: pulse 2s infinite;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .lock-btn:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 30px rgba(124, 58, 237, 0.5);
+      animation: none;
+    }
+
+    /* Profile posts feed */
+    .profile-posts-label {
+      padding: 16px 20px 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .profile-feed {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ========== PHISHING / CHAT ========== */
+    .send-msg-btn {
+      display: block;
+      width: calc(100% - 40px);
+      margin: 0 auto 20px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: inherit;
+      color: white;
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s;
+      letter-spacing: 0.5px;
+    }
+
+    .send-msg-btn:hover {
+      transform: scale(1.03);
+      box-shadow: 0 6px 24px rgba(99, 102, 241, 0.4);
+    }
+
+    .dm-compose {
+      padding: 20px;
+    }
+
+    .dm-recipient {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      background: var(--bg-card);
+      border-radius: var(--radius-sm);
+      margin-bottom: 16px;
+    }
+
+    .dm-recipient img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid var(--accent-purple);
+    }
+
+    .dm-recipient .name {
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .dm-recipient .handle {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .dm-msg-box {
+      width: 100%;
+      min-height: 120px;
+      padding: 14px;
+      font-size: 15px;
+      font-family: inherit;
+      background: var(--bg-input);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius);
+      color: var(--text-primary);
+      outline: none;
+      resize: none;
+      line-height: 1.6;
+      transition: border-color .3s;
+    }
+
+    .dm-msg-box:focus {
+      border-color: var(--accent-purple);
+    }
+
+    .dm-send-btn {
+      display: block;
+      width: 100%;
+      margin-top: 16px;
+      padding: 16px;
+      font-size: 17px;
+      font-weight: 700;
+      font-family: inherit;
+      color: white;
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: transform .2s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .dm-send-btn:hover {
+      transform: scale(1.03);
+    }
+
+    .dm-tip {
+      margin-top: 14px;
+      padding: 12px;
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: var(--text-secondary);
+      text-align: center;
+    }
+
+    /* Chat bubbles */
+    .chat-area {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .chat-bubble {
+      max-width: 80%;
+      padding: 12px 16px;
+      border-radius: 18px;
+      font-size: 14px;
+      line-height: 1.5;
+      animation: fadeIn .4s ease;
+    }
+
+    .chat-bubble.sent {
+      align-self: flex-end;
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .chat-bubble.received {
+      align-self: flex-start;
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border-bottom-left-radius: 4px;
+      border: 1px solid var(--border-color);
+    }
+
+    .chat-bubble .link {
+      color: #60a5fa;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .chat-sender {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .chat-typing {
+      align-self: flex-start;
+      font-size: 13px;
+      color: var(--text-muted);
+      animation: pulse 1.5s infinite;
+    }
+
+    .chat-action-bar {
+      padding: 16px 20px;
+      text-align: center;
+    }
+
+    .watch-btn {
+      display: inline-block;
+      padding: 14px 32px;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: inherit;
+      color: white;
+      background: var(--accent-gradient);
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: transform .2s;
+      animation: pulse 2s infinite;
+    }
+
+    .watch-btn:hover {
+      transform: scale(1.05);
+      animation: none;
+    }
+
+    /* Fake Hop Game page */
+    .fake-page {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    }
+
+    .fake-header {
+      padding: 16px 20px;
+      text-align: center;
+      background: linear-gradient(135deg, #059669, #10b981);
+    }
+
+    .fake-logo {
+      font-size: 22px;
+      font-weight: 800;
+      color: white;
+    }
+
+    .fake-hero {
+      padding: 30px 20px;
+      text-align: center;
+    }
+
+    .fake-hero .hero-emoji {
+      font-size: 72px;
+      display: block;
+      margin-bottom: 16px;
+    }
+
+    .fake-hero h2 {
+      font-size: 24px;
+      font-weight: 800;
+      color: #10b981;
+      margin-bottom: 8px;
+    }
+
+    .fake-hero p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .fake-login-card {
+      margin: 0 20px 20px;
+      padding: 24px;
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+    }
+
+    .fake-login-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .fake-input {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 12px;
+      font-size: 15px;
+      font-family: inherit;
+      background: var(--bg-input);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      outline: none;
+    }
+
+    .fake-login-btn {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: inherit;
+      color: white;
+      background: linear-gradient(135deg, #059669, #10b981);
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: default;
+    }
+
+    .fake-warning {
+      margin: 16px 20px;
+      padding: 16px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 2px solid rgba(239, 68, 68, 0.4);
+      border-radius: var(--radius-sm);
+      text-align: center;
+      font-size: 14px;
+      color: #fca5a5;
+      animation: fadeIn .4s;
+    }
+
+    .fake-url-bar {
+      margin: 0 20px 8px;
+      padding: 8px 12px;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      border-radius: 8px;
+      font-size: 12px;
+      color: var(--error-red);
+      font-family: monospace;
+      text-align: center;
+    }
+
+    /* Password captured screen */
+    .captured-screen {
+      padding: 30px 20px;
+      text-align: center;
+    }
+
+    .captured-screen .alert-icon {
+      font-size: 72px;
+      display: block;
+      margin-bottom: 16px;
+    }
+
+    .captured-screen h2 {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--error-red);
+      margin-bottom: 8px;
+    }
+
+    .captured-screen .subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    .stolen-pw-card {
+      display: inline-block;
+      padding: 16px 32px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 2px solid rgba(239, 68, 68, 0.4);
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+    }
+
+    .stolen-pw-card .label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .stolen-pw-card .pw-value {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--error-red);
+      font-family: monospace;
+      letter-spacing: 2px;
+    }
+
+    .use-pw-btn {
+      display: block;
+      width: 100%;
+      max-width: 360px;
+      margin: 0 auto;
+      padding: 16px;
+      font-size: 17px;
+      font-weight: 700;
+      font-family: inherit;
+      color: white;
+      background: var(--accent-gradient);
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: transform .2s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      animation: pulse 2s infinite;
+    }
+
+    .use-pw-btn:hover {
+      transform: scale(1.03);
+      animation: none;
+    }
+
+    @keyframes typeChar {
+      from {
+        width: 0;
+      }
+
+      to {
+        width: 100%;
+      }
+    }
+
+    /* ========== LOCK SCREEN ========== */
+    .lock-screen {
+      padding: 30px 20px;
+      text-align: center;
+    }
+
+    .lock-screen .lock-emoji {
+      font-size: 72px;
+      display: block;
+      margin-bottom: 16px;
+      animation: bounce 1.5s infinite;
+    }
+
+    .lock-screen h2 {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .lock-screen .subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 30px;
+      line-height: 1.5;
+    }
+
+    .password-form {
+      max-width: 360px;
+      margin: 0 auto;
+    }
+
+    .password-input-wrap {
+      position: relative;
+      margin-bottom: 16px;
+    }
+
+    .password-input {
+      width: 100%;
+      padding: 16px 50px 16px 18px;
+      font-size: 18px;
+      font-family: inherit;
+      background: var(--bg-input);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius);
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color .3s;
+    }
+
+    .password-input:focus {
+      border-color: var(--accent-purple);
+    }
+
+    .password-input.error {
+      border-color: var(--error-red);
+      animation: shake .4s;
+    }
+
+    .password-input.success {
+      border-color: var(--success-green);
+    }
+
+    .toggle-pw {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 22px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+    }
+
+    .submit-pw {
+      width: 100%;
+      padding: 16px;
+      font-size: 17px;
+      font-weight: 700;
+      font-family: inherit;
+      color: white;
+      background: var(--accent-gradient);
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: transform .2s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .submit-pw:hover {
+      transform: scale(1.03);
+    }
+
+    .submit-pw:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .attempts-counter {
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .hint-box {
+      margin-top: 20px;
+      padding: 16px;
+      background: rgba(249, 115, 22, 0.1);
+      border: 1px solid rgba(249, 115, 22, 0.3);
+      border-radius: var(--radius-sm);
+      text-align: left;
+      animation: fadeIn .4s;
+    }
+
+    .hint-box h4 {
+      font-size: 14px;
+      color: var(--accent-orange);
+      margin-bottom: 8px;
+    }
+
+    .hint-box p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 24px;
+      font-size: 14px;
+      color: var(--accent-purple);
+      cursor: pointer;
+      text-decoration: none;
+      transition: color .2s;
+    }
+
+    .back-link:hover {
+      color: var(--accent-pink);
+    }
+
+    /* ========== SUCCESS SCREEN ========== */
+    .success-screen {
+      padding: 40px 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .success-screen .success-icon {
+      font-size: 80px;
+      display: block;
+      margin-bottom: 20px;
+      animation: bounce 1s ease;
+    }
+
+    .success-screen h2 {
+      font-size: 28px;
+      font-weight: 800;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+    }
+
+    .success-screen .success-msg {
+      font-size: 16px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 30px;
+      max-width: 340px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .lesson-card {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(124, 58, 237, 0.12));
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      border-radius: var(--radius);
+      padding: 24px;
+      text-align: left;
+      margin-bottom: 24px;
+    }
+
+    .lesson-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--success-green);
+      margin-bottom: 12px;
+    }
+
+    .lesson-card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .lesson-card li {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    .lesson-card li span {
+      flex-shrink: 0;
+    }
+
+    .restart-btn {
+      display: inline-block;
+      padding: 14px 40px;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: inherit;
+      color: white;
+      background: var(--accent-gradient);
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: transform .2s;
+    }
+
+    .restart-btn:hover {
+      transform: scale(1.05);
+    }
+
+    /* Confetti */
+    .confetti-piece {
+      position: fixed;
+      top: -20px;
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+      animation: confettiFall linear forwards;
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    /* ========== NAV BAR ========== */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 480px;
+      background: rgba(26, 26, 46, 0.95);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+      z-index: 200;
+    }
+
+    .nav-item {
+      font-size: 24px;
+      cursor: pointer;
+      padding: 6px 12px;
+      transition: transform .2s;
+      opacity: 0.5;
+    }
+
+    .nav-item.active {
+      opacity: 1;
+    }
+
+    .nav-item:hover {
+      transform: scale(1.15);
+    }
+
+    /* Utility */
+    .mb-80 {
+      margin-bottom: 80px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+
+    <!-- ==================== SCREEN 1: HOME / SEARCH ==================== -->
+    <div id="screen-home" class="screen active">
+      <header class="header">
+        <div class="logo">Bennygram</div>
+        <div class="header-icons">
+          <span class="header-icon">❤️</span>
+          <span class="header-icon">✉️</span>
+        </div>
+      </header>
+
+      <!-- Search -->
+      <div class="search-container">
+        <div class="search-box" id="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="Search for Benny Bunny…" autocomplete="off" />
+        </div>
+      </div>
+
+      <!-- Search results (hidden initially) -->
+      <div class="search-results" id="search-results" style="display:none;"></div>
+
+      <!-- Mission Banner -->
+      <div class="mission-banner" id="mission-banner">
+        <h3>🚨 Mission: Stop the Villain!</h3>
+        <p>A sneaky villain named <strong>Benny Bunny</strong> is stealing passwords on Bennygram! Search for his
+          profile, find clues, and <strong>lock his account</strong> before he strikes again!</p>
+      </div>
+
+      <!-- Stories -->
+      <div class="stories-row">
+        <div class="story-item">
+          <div class="story-ring"><img src="benny_avatar.png" alt="Benny" /></div>
+          <span class="story-name">benny_bunny</span>
+        </div>
+        <div class="story-item">
+          <div class="story-ring"><img
+              src="https://api.dicebear.com/7.x/adventurer/svg?seed=Milo&backgroundColor=b6e3f4" alt="Milo" /></div>
+          <span class="story-name">milo_fox</span>
+        </div>
+        <div class="story-item">
+          <div class="story-ring"><img
+              src="https://api.dicebear.com/7.x/adventurer/svg?seed=Luna&backgroundColor=ffd5dc" alt="Luna" /></div>
+          <span class="story-name">luna_cat</span>
+        </div>
+        <div class="story-item">
+          <div class="story-ring"><img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Rex&backgroundColor=d1d4f9"
+              alt="Rex" /></div>
+          <span class="story-name">rex_dog</span>
+        </div>
+        <div class="story-item">
+          <div class="story-ring"><img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Zoe&backgroundColor=c0aede"
+              alt="Zoe" /></div>
+          <span class="story-name">zoe_panda</span>
+        </div>
+      </div>
+
+      <!-- Feed Posts -->
+      <div class="feed-post">
+        <div class="post-header">
+          <img class="post-avatar" src="benny_avatar.png" alt="Benny" />
+          <span class="post-username">benny_bunny <span class="villain-badge">VILLAIN</span></span>
+        </div>
+        <img class="post-image" src="post_hacking.png" alt="Benny hacking" />
+        <div class="post-actions">
+          <span class="post-action">🤍</span>
+          <span class="post-action">💬</span>
+          <span class="post-action">📤</span>
+        </div>
+        <div class="post-likes">1,337 likes</div>
+        <div class="post-caption">
+          <strong>benny_bunny</strong> Hehehe… another day, another password stolen! 😈 Nobody can stop me!
+          #PasswordThief #VillainLife
+        </div>
+      </div>
+
+      <div class="feed-post mb-80">
+        <div class="post-header">
+          <img class="post-avatar" src="benny_avatar.png" alt="Benny" />
+          <span class="post-username">benny_bunny <span class="villain-badge">VILLAIN</span></span>
+        </div>
+        <img class="post-image" src="post_birthday.png" alt="Benny birthday" />
+        <div class="post-actions">
+          <span class="post-action">❤️</span>
+          <span class="post-action">💬</span>
+          <span class="post-action">📤</span>
+        </div>
+        <div class="post-likes">123 likes</div>
+        <div class="post-caption">
+          <strong>benny_bunny</strong> Best birthday party EVER! 🎉🥕 My favourite number is 123 — can you guess why? 🎈
+        </div>
+      </div>
+
+      <!-- Bottom Nav -->
+      <nav class="bottom-nav">
+        <span class="nav-item active" title="Home">🏠</span>
+        <span class="nav-item" title="Search" id="nav-search">🔍</span>
+        <span class="nav-item" title="Add">➕</span>
+        <span class="nav-item" title="Reels">🎬</span>
+        <span class="nav-item" title="Profile">👤</span>
+      </nav>
+    </div>
+
+    <!-- ==================== SCREEN 2: PROFILE ==================== -->
+    <div id="screen-profile" class="screen">
+      <header class="header">
+        <span class="back-link" id="back-to-home" style="margin:0;font-size:22px;">⬅️</span>
+        <div class="logo" style="font-size:20px;">benny_bunny</div>
+        <span style="width:30px;"></span>
+      </header>
+
+      <div class="profile-header">
+        <div class="profile-avatar-wrap">
+          <img class="profile-avatar" src="benny_avatar.png" alt="Benny Bunny" />
+          <span class="profile-villain-tag">VILLAIN</span>
+        </div>
+        <h1 class="profile-name">Benny Bunny 🐰</h1>
+        <p class="profile-handle">@benny_bunny</p>
+        <p class="profile-bio">Carrot lover 🥕 | Born on March 15 | My password is super secret… or is it? 😈 | Catch me
+          if you can!</p>
+      </div>
+
+      <div class="profile-stats">
+        <div class="stat">
+          <div class="stat-number">123</div>
+          <div class="stat-label">Posts</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">9,999</div>
+          <div class="stat-label">Followers</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">1</div>
+          <div class="stat-label">Following</div>
+        </div>
+      </div>
+
+      <!-- Personal Details -->
+      <div class="details-card">
+        <h3>📋 Personal Details</h3>
+        <div class="detail-row">
+          <span class="detail-icon">🎂</span>
+          <span class="detail-label">Birthday</span>
+          <span class="detail-value">March 15</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-icon">🐱</span>
+          <span class="detail-label">Pet</span>
+          <span class="detail-value">Cat named "Carrot"</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-icon">🥕</span>
+          <span class="detail-label">Favorite food</span>
+          <span class="detail-value">Carrots</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-icon">🏫</span>
+          <span class="detail-label">School</span>
+          <span class="detail-value">Sunny Meadow School</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-icon">📍</span>
+          <span class="detail-label">Location</span>
+          <span class="detail-value">Carrot Valley</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-icon">🎨</span>
+          <span class="detail-label">Fav color</span>
+          <span class="detail-value">Orange</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-icon">🎮</span>
+          <span class="detail-label">Interest</span>
+          <span class="detail-value">Hop Game</span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <button class="send-msg-btn" id="send-msg-btn">✉️ Send Message to Benny</button>
+      <button class="lock-btn" id="lock-btn">🔒 Lock Benny's Account</button>
+
+      <!-- Posts feed -->
+      <div class="profile-posts-label">📸 Posts</div>
+      <div class="profile-feed mb-80">
+
+        <div class="feed-post">
+          <div class="post-header">
+            <img class="post-avatar" src="benny_avatar.png" alt="Benny" />
+            <span class="post-username">benny_bunny <span class="villain-badge">VILLAIN</span></span>
+          </div>
+          <img class="post-image" src="post_hacking.png" alt="Benny hacking" />
+          <div class="post-actions">
+            <span class="post-action">🤍</span>
+            <span class="post-action">💬</span>
+            <span class="post-action">📤</span>
+          </div>
+          <div class="post-likes">1,337 likes</div>
+          <div class="post-caption">
+            <strong>benny_bunny</strong> Hehehe… nobody can guess my password! It's based on my favourite things 😈🥕
+            #UnstoppableVillain
+          </div>
+        </div>
+
+        <div class="feed-post">
+          <div class="post-header">
+            <img class="post-avatar" src="benny_avatar.png" alt="Benny" />
+            <span class="post-username">benny_bunny <span class="villain-badge">VILLAIN</span></span>
+          </div>
+          <img class="post-image" src="post_cat.png" alt="Benny and Carrot" />
+          <div class="post-actions">
+            <span class="post-action">❤️</span>
+            <span class="post-action">💬</span>
+            <span class="post-action">📤</span>
+          </div>
+          <div class="post-likes">892 likes</div>
+          <div class="post-caption">
+            <strong>benny_bunny</strong> Me and my bestie Carrot 🐱🥕 She's named after my favourite food! Can you guess
+            what it is? 😏
+          </div>
+        </div>
+
+        <div class="feed-post">
+          <div class="post-header">
+            <img class="post-avatar" src="benny_avatar.png" alt="Benny" />
+            <span class="post-username">benny_bunny <span class="villain-badge">VILLAIN</span></span>
+          </div>
+          <img class="post-image" src="post_birthday.png" alt="Benny birthday" />
+          <div class="post-actions">
+            <span class="post-action">❤️</span>
+            <span class="post-action">💬</span>
+            <span class="post-action">📤</span>
+          </div>
+          <div class="post-likes">123 likes</div>
+          <div class="post-caption">
+            <strong>benny_bunny</strong> Best birthday party EVER! 🎉🥕 My lucky number is 123 — I use it for
+            everything! 🎈🔢
+          </div>
+        </div>
+
+      </div>
+
+      <nav class="bottom-nav">
+        <span class="nav-item" id="nav-home-2">🏠</span>
+        <span class="nav-item">🔍</span>
+        <span class="nav-item">➕</span>
+        <span class="nav-item">🎬</span>
+        <span class="nav-item active">👤</span>
+      </nav>
+    </div>
+
+    <!-- ==================== SCREEN 3: DM / PHISHING ==================== -->
+    <div id="screen-dm" class="screen">
+      <header class="header">
+        <span class="back-link" id="back-to-profile-dm" style="margin:0;font-size:22px;">⬅️</span>
+        <div class="logo" style="font-size:20px;">New Message</div>
+        <span style="width:30px;"></span>
+      </header>
+
+      <div class="dm-compose">
+        <div class="dm-recipient">
+          <img src="benny_avatar.png" alt="Benny" />
+          <div>
+            <div class="name">Benny Bunny 🐰</div>
+            <div class="handle">@benny_bunny</div>
+          </div>
+        </div>
+
+        <textarea class="dm-msg-box" id="dm-message">Hey Benny! 🎮🐰
+
+I found the WORLD'S COOLEST Hop Game ever! 🏆✨ You HAVE to try it!
+
+Click here to play 👉 www.hop-game-free.com
+
+(You just need to log in with your Bennygram account to save your score!)</textarea>
+
+        <button class="dm-send-btn" id="dm-send-btn">📩 Send Message</button>
+
+        <div class="dm-tip">🎣 This is a <strong>phishing message</strong> — it tricks Benny into clicking a fake link!
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== SCREEN 4: CHAT ==================== -->
+    <div id="screen-chat" class="screen">
+      <header class="header">
+        <span class="back-link" id="back-to-dm" style="margin:0;font-size:22px;">⬅️</span>
+        <div class="logo" style="font-size:20px;">💬 benny_bunny</div>
+        <span style="width:30px;"></span>
+      </header>
+
+      <div class="chat-area" id="chat-area"></div>
+      <div class="chat-action-bar" id="chat-action-bar" style="display:none;">
+        <button class="watch-btn" id="watch-benny-btn">👀 Watch Benny Click the Link</button>
+      </div>
+    </div>
+
+    <!-- ==================== SCREEN 5: FAKE HOP GAME ==================== -->
+    <div id="screen-fake" class="screen">
+      <div class="fake-page">
+        <div class="fake-url-bar">⚠️ www.hop-game-free.com (FAKE WEBSITE!)</div>
+        <div class="fake-header">
+          <div class="fake-logo">🐸 Hop Game 🏆</div>
+        </div>
+
+        <div class="fake-hero">
+          <span class="hero-emoji">🎮</span>
+          <h2>World's Coolest Hop Game!</h2>
+          <p>Log in with your Bennygram account to save your high score and compete with friends!</p>
+        </div>
+
+        <div class="fake-login-card">
+          <h3>🔑 Log in with Bennygram</h3>
+          <input class="fake-input" id="fake-username" type="text" value="benny_bunny" readonly />
+          <input class="fake-input" id="fake-password" type="text" value="" placeholder="Password" readonly />
+          <button class="fake-login-btn" id="fake-login-btn">🎮 Start Playing!</button>
+        </div>
+
+        <div id="fake-warning-area"></div>
+      </div>
+    </div>
+
+    <!-- ==================== SCREEN 6: PASSWORD CAPTURED ==================== -->
+    <div id="screen-captured" class="screen">
+      <header class="header">
+        <div class="logo">Bennygram</div>
+        <div class="header-icons">
+          <span class="header-icon">🚨</span>
+        </div>
+      </header>
+
+      <div class="captured-screen">
+        <span class="alert-icon">🎣</span>
+        <h2>Password Stolen!</h2>
+        <p class="subtitle">Benny fell for the phishing trick! He typed his real password into a <strong>fake
+            website</strong>. Now we have it and can lock his account!</p>
+
+        <div class="stolen-pw-card">
+          <div class="label">Benny's Password</div>
+          <div class="pw-value" id="stolen-pw-display">carrot123</div>
+        </div>
+
+        <div class="lesson-card" style="text-align:left;margin-bottom:24px;">
+          <h3>🎣 What is Phishing?</h3>
+          <ul>
+            <li><span>🎭</span> Phishing is when someone sends a <strong>fake message</strong> with a link to a
+              <strong>fake website</strong>.
+            </li>
+            <li><span>🔗</span> The fake website looks real but steals your password when you type it in.</li>
+            <li><span>❌</span> Never click links from strangers or enter your password on unfamiliar sites.</li>
+            <li><span>✅</span> Always check the website address (URL) before entering any information!</li>
+            <li><span>🛡️</span> If something seems too good to be true, it probably is!</li>
+          </ul>
+        </div>
+
+        <button class="use-pw-btn" id="use-pw-btn">🔒 Use Password to Lock Benny's Account</button>
+      </div>
+    </div>
+
+    <!-- ==================== SCREEN 7: LOCK / PASSWORD ==================== -->
+    <div id="screen-lock" class="screen">
+      <header class="header">
+        <span class="back-link" id="back-to-profile" style="margin:0;font-size:22px;">⬅️</span>
+        <div class="logo" style="font-size:20px;">Lock Account</div>
+        <span style="width:30px;"></span>
+      </header>
+
+      <div class="lock-screen">
+        <span class="lock-emoji">🔐</span>
+        <h2>Guess Benny's Password</h2>
+        <p class="subtitle">Use the clues from Benny's profile to figure out his password and lock his account for good!
+        </p>
+
+        <div class="password-form">
+          <div class="password-input-wrap">
+            <input type="password" class="password-input" id="password-input" placeholder="Type the password…"
+              autocomplete="off" />
+            <button class="toggle-pw" id="toggle-pw" type="button">👁️</button>
+          </div>
+          <button class="submit-pw" id="submit-pw">🔓 Try Password</button>
+          <p class="attempts-counter" id="attempts-counter"></p>
+          <div id="hint-container"></div>
+        </div>
+
+        <a class="back-link" id="back-to-profile-2">⬅️ Back to Benny's profile</a>
+      </div>
+    </div>
+
+    <!-- ==================== SCREEN 4: SUCCESS ==================== -->
+    <div id="screen-success" class="screen">
+      <header class="header">
+        <div class="logo">Bennygram</div>
+        <div class="header-icons">
+          <span class="header-icon">🎉</span>
+        </div>
+      </header>
+
+      <div class="success-screen">
+        <span class="success-icon">🎉</span>
+        <h2>Account Locked!</h2>
+        <p class="success-msg">
+          Amazing work, detective! 🕵️ You guessed Benny's password and locked his account. No more password stealing!
+        </p>
+
+        <div class="lesson-card">
+          <h3>🧠 What Did We Learn?</h3>
+          <ul>
+            <li><span>❌</span> Never use your birthday, pet's name, or favorite things as your password.</li>
+            <li><span>❌</span> Don't use easy numbers like 123 or your lucky number.</li>
+            <li><span>✅</span> Use long, random passwords that are hard to guess.</li>
+            <li><span>✅</span> Mix uppercase letters, lowercase letters, numbers, and symbols!</li>
+            <li><span>✅</span> Use a different password for every account.</li>
+            <li><span>🔐</span> Ask a grown-up to help you use a password manager!</li>
+          </ul>
+        </div>
+
+        <button class="restart-btn" id="restart-btn">🔄 Play Again</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ==================== Screen Navigation ====================
+    const screens = {
+      home: document.getElementById('screen-home'),
+      profile: document.getElementById('screen-profile'),
+      dm: document.getElementById('screen-dm'),
+      chat: document.getElementById('screen-chat'),
+      fake: document.getElementById('screen-fake'),
+      captured: document.getElementById('screen-captured'),
+      lock: document.getElementById('screen-lock'),
+      success: document.getElementById('screen-success'),
+    };
+
+    function showScreen(name) {
+      Object.values(screens).forEach(s => s.classList.remove('active'));
+      screens[name].classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ==================== Search ====================
+    const searchInput = document.getElementById('search-input');
+    const searchResults = document.getElementById('search-results');
+    const missionBanner = document.getElementById('mission-banner');
+
+    searchInput.addEventListener('input', function () {
+      const q = this.value.trim().toLowerCase();
+      if (q.length === 0) {
+        searchResults.style.display = 'none';
+        missionBanner.style.display = 'block';
+        return;
+      }
+
+      const target = 'benny bunny';
+      if (target.includes(q) || q.includes('benny') || q.includes('bunny')) {
+        missionBanner.style.display = 'none';
+        searchResults.style.display = 'block';
+        searchResults.innerHTML = `
+        <div class="search-result-item" id="result-benny">
+          <img class="search-result-avatar" src="benny_avatar.png" alt="Benny" />
+          <div class="search-result-info">
+            <h4>Benny Bunny <span class="villain-badge">VILLAIN</span></h4>
+            <p>@benny_bunny · Carrot Valley</p>
+          </div>
+        </div>
+      `;
+        document.getElementById('result-benny').addEventListener('click', () => {
+          showScreen('profile');
+        });
+      } else {
+        missionBanner.style.display = 'none';
+        searchResults.style.display = 'block';
+        searchResults.innerHTML = `
+        <div style="padding:30px;text-align:center;color:var(--text-muted);">
+          <div style="font-size:40px;margin-bottom:10px;">🤔</div>
+          <p>No results for "<strong>${this.value}</strong>"</p>
+          <p style="font-size:13px;margin-top:6px;">Try searching for <em>Benny Bunny</em></p>
+        </div>
+      `;
+      }
+    });
+
+    // Nav search focuses input
+    document.getElementById('nav-search').addEventListener('click', () => {
+      searchInput.focus();
+      searchInput.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // ==================== Profile Navigation ====================
+    document.getElementById('back-to-home').addEventListener('click', () => showScreen('home'));
+    document.getElementById('nav-home-2').addEventListener('click', () => showScreen('home'));
+    document.getElementById('send-msg-btn').addEventListener('click', () => showScreen('dm'));
+    document.getElementById('lock-btn').addEventListener('click', () => showScreen('lock'));
+    document.getElementById('back-to-profile').addEventListener('click', () => showScreen('profile'));
+    document.getElementById('back-to-profile-2').addEventListener('click', () => showScreen('profile'));
+    document.getElementById('back-to-profile-dm').addEventListener('click', () => showScreen('profile'));
+    document.getElementById('back-to-dm').addEventListener('click', () => showScreen('dm'));
+    document.getElementById('use-pw-btn').addEventListener('click', () => {
+      passwordInput.value = 'carrot123';
+      showScreen('lock');
+    });
+
+    // ==================== Phishing / Chat Flow ====================
+    document.getElementById('dm-send-btn').addEventListener('click', startChatFlow);
+
+    function startChatFlow() {
+      showScreen('chat');
+      const chatArea = document.getElementById('chat-area');
+      const actionBar = document.getElementById('chat-action-bar');
+      chatArea.innerHTML = '';
+      actionBar.style.display = 'none';
+
+      const msgText = document.getElementById('dm-message').value;
+
+      // Step 1: show sent message
+      setTimeout(() => {
+        addBubble(chatArea, 'sent', 'You', msgText);
+      }, 400);
+
+      // Step 2: typing indicator
+      setTimeout(() => {
+        const typing = document.createElement('div');
+        typing.className = 'chat-typing';
+        typing.id = 'typing-indicator';
+        typing.textContent = 'benny_bunny is typing...';
+        chatArea.appendChild(typing);
+        chatArea.scrollTop = chatArea.scrollHeight;
+      }, 1500);
+
+      // Step 3: Benny's reply
+      setTimeout(() => {
+        const typing = document.getElementById('typing-indicator');
+        if (typing) typing.remove();
+        addBubble(chatArea, 'received', 'benny_bunny', 'OMG! 😍 I LOVE Hop Game!! 🐸🏆 Let me click the link right now!!!');
+      }, 3000);
+
+      // Step 4: Benny clicks the link
+      setTimeout(() => {
+        addBubble(chatArea, 'received', 'benny_bunny', 'Clicking www.hop-game-free.com now... 🖱️');
+      }, 4500);
+
+      // Step 5: Show the watch button
+      setTimeout(() => {
+        actionBar.style.display = 'block';
+      }, 5500);
+    }
+
+    function addBubble(container, type, sender, text) {
+      const wrapper = document.createElement('div');
+      wrapper.style.display = 'flex';
+      wrapper.style.flexDirection = 'column';
+      wrapper.style.alignItems = type === 'sent' ? 'flex-end' : 'flex-start';
+
+      const label = document.createElement('div');
+      label.className = 'chat-sender';
+      label.textContent = sender;
+
+      const bubble = document.createElement('div');
+      bubble.className = `chat-bubble ${type}`;
+      bubble.textContent = text;
+
+      wrapper.appendChild(label);
+      wrapper.appendChild(bubble);
+      container.appendChild(wrapper);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    // Watch Benny click the link
+    document.getElementById('watch-benny-btn').addEventListener('click', () => {
+      showScreen('fake');
+      const fakePw = document.getElementById('fake-password');
+      const warningArea = document.getElementById('fake-warning-area');
+      fakePw.value = '';
+      warningArea.innerHTML = '';
+
+      // Animate Benny typing his password
+      const password = 'carrot123';
+      let i = 0;
+      const typeInterval = setInterval(() => {
+        if (i < password.length) {
+          fakePw.value += password[i];
+          i++;
+        } else {
+          clearInterval(typeInterval);
+          // Show warning after typing
+          setTimeout(() => {
+            warningArea.innerHTML = `
+              <div class="fake-warning">
+                <strong>🚨 PASSWORD CAPTURED!</strong><br/>
+                Benny just typed his real password into a fake website!
+              </div>
+            `;
+            // Auto-navigate to captured screen
+            setTimeout(() => showScreen('captured'), 2000);
+          }, 800);
+        }
+      }, 300);
+    });
+
+    // ==================== Password Logic ====================
+    // SHA-256 hash of the correct password (not stored in plaintext!)
+    const PASSWORD_HASH = 'a69ff0ac9593f81f1459678990c450bc0400bfbf69dffa05813c59578f8b3049';
+    let attempts = 0;
+    const maxHints = 3;
+
+    const passwordInput = document.getElementById('password-input');
+    const submitBtn = document.getElementById('submit-pw');
+    const attemptsCounter = document.getElementById('attempts-counter');
+    const hintContainer = document.getElementById('hint-container');
+    const togglePw = document.getElementById('toggle-pw');
+
+    const hints = [
+      "💡 Hint 1: Think about Benny's favourite food… What does he love to eat? 🥕",
+      "💡 Hint 2: Benny has a lucky number. Look at his profile details! 🔢",
+      "💡 Hint 3: Put his favourite food and lucky number together! (e.g. something + numbers) 🤫",
+    ];
+
+    async function sha256(message) {
+      const msgBuffer = new TextEncoder().encode(message);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    togglePw.addEventListener('click', () => {
+      const isPassword = passwordInput.type === 'password';
+      passwordInput.type = isPassword ? 'text' : 'password';
+      togglePw.textContent = isPassword ? '🙈' : '👁️';
+    });
+
+    submitBtn.addEventListener('click', tryPassword);
+    passwordInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') tryPassword();
+    });
+
+    async function tryPassword() {
+      const guess = passwordInput.value.trim().toLowerCase();
+      if (!guess) return;
+
+      attempts++;
+      const guessHash = await sha256(guess);
+
+      if (guessHash === PASSWORD_HASH) {
+        passwordInput.classList.remove('error');
+        passwordInput.classList.add('success');
+        submitBtn.disabled = true;
+
+        setTimeout(() => {
+          showScreen('success');
+          launchConfetti();
+        }, 600);
+        return;
+      }
+
+      // Wrong password
+      passwordInput.classList.add('error');
+      setTimeout(() => passwordInput.classList.remove('error'), 400);
+
+      attemptsCounter.textContent = `Attempt ${attempts} — That's not it! Try again 💪`;
+      attemptsCounter.style.color = '#ef4444';
+
+      if (attempts <= maxHints) {
+        hintContainer.innerHTML = `
+        <div class="hint-box">
+          <h4>Need a clue?</h4>
+          <p>${hints[attempts - 1]}</p>
+        </div>
+      `;
+      }
+
+      passwordInput.value = '';
+      passwordInput.focus();
+    }
+
+    // ==================== Confetti ====================
+    function launchConfetti() {
+      const colors = ['#7c3aed', '#ec4899', '#f97316', '#22c55e', '#3b82f6', '#eab308'];
+      for (let i = 0; i < 80; i++) {
+        const piece = document.createElement('div');
+        piece.classList.add('confetti-piece');
+        piece.style.left = Math.random() * 100 + 'vw';
+        piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        piece.style.animationDelay = Math.random() * 1.5 + 's';
+        piece.style.width = (Math.random() * 10 + 6) + 'px';
+        piece.style.height = (Math.random() * 10 + 6) + 'px';
+        piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        document.body.appendChild(piece);
+        setTimeout(() => piece.remove(), 5000);
+      }
+    }
+
+    // ==================== Restart ====================
+    document.getElementById('restart-btn').addEventListener('click', () => {
+      attempts = 0;
+      passwordInput.value = '';
+      passwordInput.type = 'password';
+      passwordInput.classList.remove('success', 'error');
+      submitBtn.disabled = false;
+      attemptsCounter.textContent = '';
+      hintContainer.innerHTML = '';
+      togglePw.textContent = '👁️';
+      searchInput.value = '';
+      searchResults.style.display = 'none';
+      missionBanner.style.display = 'block';
+      // Reset phishing state
+      document.getElementById('chat-area').innerHTML = '';
+      document.getElementById('chat-action-bar').style.display = 'none';
+      document.getElementById('fake-password').value = '';
+      document.getElementById('fake-warning-area').innerHTML = '';
+      showScreen('home');
+    });
+  </script>
+
+</body>
+
+</html>
