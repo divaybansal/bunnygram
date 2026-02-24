@@ -191,6 +191,35 @@
       transform: scale(1.2);
     }
 
+    /* Language Toggle */
+    .lang-toggle {
+      display: flex;
+      background: var(--bg-input);
+      border-radius: 20px;
+      padding: 2px;
+      border: 1px solid var(--border-color);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .lang-btn {
+      padding: 4px 10px;
+      border-radius: 18px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .lang-btn.active {
+      background: var(--accent-gradient);
+      color: white;
+    }
+
     /* ========== SEARCH SCREEN ========== */
     .search-container {
       padding: 20px;
@@ -1284,6 +1313,10 @@
       <header class="header">
         <div class="logo">Bunnygram</div>
         <div class="header-icons">
+          <div class="lang-toggle" id="lang-toggle">
+            <button class="lang-btn" data-lang="en">EN</button>
+            <button class="lang-btn active" data-lang="de">DE</button>
+          </div>
           <span class="header-icon">❤️</span>
           <span class="header-icon">✉️</span>
         </div>
@@ -1293,7 +1326,8 @@
       <div class="search-container">
         <div class="search-box" id="search-box">
           <span class="search-icon">🔍</span>
-          <input type="text" id="search-input" placeholder="Search for Benny Bunny…" autocomplete="off" />
+          <input type="text" id="search-input" placeholder="Search for Benny Bunny…"
+            data-i18n-placeholder="searchPlaceholder" autocomplete="off" />
         </div>
       </div>
 
@@ -1302,8 +1336,9 @@
 
       <!-- Mission Banner -->
       <div class="mission-banner" id="mission-banner">
-        <h3>🚨 Mission: Stop the Villain!</h3>
-        <p>A sneaky villain named <strong>Benny Bunny</strong> is stealing passwords on Bunnygram! Search for his
+        <h3 data-i18n="missionTitle">🚨 Mission: Stop the Villain!</h3>
+        <p data-i18n="missionDesc">A sneaky villain named <strong>Benny Bunny</strong> is stealing passwords on
+          Bunnygram! Search for his
           profile, find clues, and <strong>lock his account</strong> before he strikes again!</p>
       </div>
 
@@ -1417,47 +1452,47 @@
 
       <!-- Personal Details -->
       <div class="details-card">
-        <h3>📋 Personal Details</h3>
+        <h3 data-i18n="personalDetails">📋 Personal Details</h3>
         <div class="detail-row">
           <span class="detail-icon">🎂</span>
-          <span class="detail-label">Birthday</span>
-          <span class="detail-value">March 15</span>
+          <span class="detail-label" data-i18n="lblBirthday">Birthday</span>
+          <span class="detail-value" data-i18n="valBirthday">March 15</span>
         </div>
         <div class="detail-row">
           <span class="detail-icon">🐱</span>
-          <span class="detail-label">Pet</span>
-          <span class="detail-value">Cat named "Carrot"</span>
+          <span class="detail-label" data-i18n="lblPet">Pet</span>
+          <span class="detail-value" data-i18n="valPet">Cat named "Carrot"</span>
         </div>
         <div class="detail-row">
           <span class="detail-icon">🥕</span>
-          <span class="detail-label">Favorite food</span>
-          <span class="detail-value">Carrots</span>
+          <span class="detail-label" data-i18n="lblFood">Favorite food</span>
+          <span class="detail-value" data-i18n="valFood">Carrots</span>
         </div>
         <div class="detail-row">
           <span class="detail-icon">🏫</span>
-          <span class="detail-label">School</span>
-          <span class="detail-value">Sunny Meadow School</span>
+          <span class="detail-label" data-i18n="lblSchool">School</span>
+          <span class="detail-value" data-i18n="valSchool">Sunny Meadow School</span>
         </div>
         <div class="detail-row">
           <span class="detail-icon">📍</span>
-          <span class="detail-label">Location</span>
-          <span class="detail-value">Carrot Valley</span>
+          <span class="detail-label" data-i18n="lblLocation">Location</span>
+          <span class="detail-value" data-i18n="valLocation">Carrot Valley</span>
         </div>
         <div class="detail-row">
           <span class="detail-icon">🎨</span>
-          <span class="detail-label">Fav color</span>
-          <span class="detail-value">Orange</span>
+          <span class="detail-label" data-i18n="lblColor">Fav color</span>
+          <span class="detail-value" data-i18n="valColor">Orange</span>
         </div>
         <div class="detail-row">
           <span class="detail-icon">🎮</span>
-          <span class="detail-label">Interest</span>
+          <span class="detail-label" data-i18n="lblInterest">Interest</span>
           <span class="detail-value">Hop Game</span>
         </div>
       </div>
 
       <!-- Action Buttons -->
-      <button class="send-msg-btn" id="send-msg-btn">✉️ Send Message to Benny</button>
-      <button class="lock-btn" id="lock-btn">🔒 Lock Benny's Account</button>
+      <button class="send-msg-btn" id="send-msg-btn" data-i18n="sendMsgBtn">✉️ Send Message to Benny</button>
+      <button class="lock-btn" id="lock-btn" data-i18n="lockBtn">🔒 Lock Benny's Account</button>
 
       <!-- Posts feed -->
       <div class="profile-posts-label">📸 Posts</div>
@@ -1632,7 +1667,7 @@ Click here to play 👉 www.hop-game-free.com
           </ul>
         </div>
 
-        <button class="use-pw-btn" id="use-pw-btn">🔒 Use Password to Lock Benny's Account</button>
+        <button class="use-pw-btn" id="use-pw-btn" data-i18n="usePwBtn">🔒 Use Password to Lock Benny's Account</button>
       </div>
     </div>
 
@@ -1640,28 +1675,29 @@ Click here to play 👉 www.hop-game-free.com
     <div id="screen-lock" class="screen">
       <header class="header">
         <span class="back-link" id="back-to-profile" style="margin:0;font-size:22px;">⬅️</span>
-        <div class="logo" style="font-size:20px;">Lock Account</div>
+        <div class="logo" style="font-size:20px;" data-i18n="lockAccountTitle">Lock Account</div>
         <span style="width:30px;"></span>
       </header>
 
       <div class="lock-screen">
         <span class="lock-emoji">🔐</span>
-        <h2>Guess Benny's Password</h2>
-        <p class="subtitle">Use the clues from Benny's profile to figure out his password and lock his account for good!
+        <h2 data-i18n="guessTitle">Guess Benny's Password</h2>
+        <p class="subtitle" data-i18n="guessSubtitle">Use the clues from Benny's profile to figure out his password and
+          lock his account for good!
         </p>
 
         <div class="password-form">
           <div class="password-input-wrap">
             <input type="password" class="password-input" id="password-input" placeholder="Type the password…"
-              autocomplete="off" />
+              data-i18n-placeholder="pwPlaceholder" autocomplete="off" />
             <button class="toggle-pw" id="toggle-pw" type="button">👁️</button>
           </div>
-          <button class="submit-pw" id="submit-pw">🔓 Try Password</button>
+          <button class="submit-pw" id="submit-pw" data-i18n="tryPwBtn">🔓 Try Password</button>
           <p class="attempts-counter" id="attempts-counter"></p>
           <div id="hint-container"></div>
         </div>
 
-        <a class="back-link" id="back-to-profile-2">⬅️ Back to Benny's profile</a>
+        <a class="back-link" id="back-to-profile-2" data-i18n="backToProfile">⬅️ Back to Benny's profile</a>
       </div>
     </div>
 
@@ -1676,30 +1712,165 @@ Click here to play 👉 www.hop-game-free.com
 
       <div class="success-screen">
         <span class="success-icon">🎉</span>
-        <h2>Account Locked!</h2>
-        <p class="success-msg">
+        <h2 data-i18n="accountLocked">Account Locked!</h2>
+        <p class="success-msg" data-i18n="successMsg">
           Amazing work, detective! 🕵️ You guessed Benny's password and locked his account. No more password stealing!
         </p>
 
         <div class="lesson-card">
-          <h3>🧠 What Did We Learn?</h3>
+          <h3 data-i18n="lessonTitle">🧠 What Did We Learn?</h3>
           <ul>
-            <li><span>❌</span> Never use your birthday, pet's name, or favorite things as your password.</li>
-            <li><span>❌</span> Don't use easy numbers like 123 or your lucky number.</li>
-            <li><span>✅</span> Use long, random passwords that are hard to guess.</li>
-            <li><span>✅</span> Mix uppercase letters, lowercase letters, numbers, and symbols!</li>
-            <li><span>✅</span> Use a different password for every account.</li>
-            <li><span>🔐</span> Ask a grown-up to help you use a password manager!</li>
+            <li><span>❌</span> <span data-i18n="lesson1">Never use your birthday, pet's name, or favorite things as your
+                password.</span></li>
+            <li><span>❌</span> <span data-i18n="lesson2">Don't use easy numbers like 123 or your lucky number.</span>
+            </li>
+            <li><span>✅</span> <span data-i18n="lesson3">Use long, random passwords that are hard to guess.</span></li>
+            <li><span>✅</span> <span data-i18n="lesson4">Mix uppercase letters, lowercase letters, numbers, and
+                symbols!</span></li>
+            <li><span>✅</span> <span data-i18n="lesson5">Use a different password for every account.</span></li>
+            <li><span>🔐</span> <span data-i18n="lesson6">Ask a grown-up to help you use a password manager!</span></li>
           </ul>
         </div>
 
-        <button class="restart-btn" id="restart-btn">🔄 Play Again</button>
+        <button class="restart-btn" id="restart-btn" data-i18n="playAgain">🔄 Play Again</button>
       </div>
     </div>
 
   </div>
 
   <script>
+    // ==================== i18n / Language Toggle ====================
+    let currentLang = 'de';
+
+    const translations = {
+      en: {
+        searchPlaceholder: 'Search for Benny Bunny…',
+        missionTitle: '🚨 Mission: Stop the Villain!',
+        missionDesc: 'A sneaky villain named <strong>Benny Bunny</strong> is stealing passwords on Bunnygram! Search for his profile, find clues, and <strong>lock his account</strong> before he strikes again!',
+        personalDetails: '📋 Personal Details',
+        lblBirthday: 'Birthday', valBirthday: 'March 15',
+        lblPet: 'Pet', valPet: 'Cat named "Carrot"',
+        lblFood: 'Favorite food', valFood: 'Carrots',
+        lblSchool: 'School', valSchool: 'Sunny Meadow School',
+        lblLocation: 'Location', valLocation: 'Carrot Valley',
+        lblColor: 'Fav color', valColor: 'Orange',
+        lblLucky: 'Lucky number',
+        lblInterest: 'Interest',
+        sendMsgBtn: '✉️ Send Message to Benny',
+        lockBtn: '🔒 Lock Benny\'s Account',
+        lockAccountTitle: 'Lock Account',
+        guessTitle: 'Guess Benny\'s Password',
+        guessSubtitle: 'Use the clues from Benny\'s profile to figure out his password and lock his account for good!',
+        pwPlaceholder: 'Type the password…',
+        tryPwBtn: '🔓 Try Password',
+        backToProfile: '⬅️ Back to Benny\'s profile',
+        accountLocked: 'Account Locked!',
+        successMsg: 'Amazing work, detective! 🕵️ You guessed Benny\'s password and locked his account. No more password stealing!',
+        lessonTitle: '🧠 What Did We Learn?',
+        lesson1: 'Never use your birthday, pet\'s name, or favorite things as your password.',
+        lesson2: 'Don\'t use easy numbers like 123 or your lucky number.',
+        lesson3: 'Use long, random passwords that are hard to guess.',
+        lesson4: 'Mix uppercase letters, lowercase letters, numbers, and symbols!',
+        lesson5: 'Use a different password for every account.',
+        lesson6: 'Ask a grown-up to help you use a password manager!',
+        playAgain: '🔄 Play Again',
+        pwStolen: 'Password Stolen!',
+        pwStolenDesc: 'Benny fell for the phishing trick! He typed his real password into a <strong>fake website</strong>. Now we have it and can lock his account!',
+        bennysPw: 'Benny\'s Password',
+        phishTitle: '🎣 What is Phishing?',
+        phish1: 'Phishing is when someone sends a <strong>fake message</strong> with a link to a <strong>fake website</strong>.',
+        phish2: 'The fake website looks real but steals your password when you type it in.',
+        phish3: 'Never click links from strangers or enter your password on unfamiliar sites.',
+        phish4: 'Always check the website address (URL) before entering any information!',
+        phish5: 'If something seems too good to be true, it probably is!',
+        usePwBtn: '🔒 Use Password to Lock Benny\'s Account',
+        hint1: '💡 Hint 1: Think about Benny\'s favourite food… What does he love to eat? 🥕',
+        hint2: '💡 Hint 2: Benny has a lucky number. Look at his profile details! 🔢',
+        hint3: '💡 Hint 3: Put his favourite food and lucky number together! (e.g. something + numbers) 🤫',
+        wrongAttempt: 'Attempt {n} — That\'s not it! Try again 💪',
+        needClue: 'Need a clue?',
+      },
+      de: {
+        searchPlaceholder: 'Suche nach Benny Bunny…',
+        missionTitle: '🚨 Mission: Stoppt den Bösewicht!',
+        missionDesc: 'Ein hinterhältiger Bösewicht namens <strong>Benny Bunny</strong> stiehlt Passwörter auf Bunnygram! Suche sein Profil, finde Hinweise und <strong>sperre sein Konto</strong>, bevor er wieder zuschlägt!',
+        personalDetails: '📋 Persönliche Daten',
+        lblBirthday: 'Geburtstag', valBirthday: '15. März',
+        lblPet: 'Haustier', valPet: 'Katze namens „Carrot"',
+        lblFood: 'Lieblingsessen', valFood: 'Karotten',
+        lblSchool: 'Schule', valSchool: 'Sonnige-Wiesen-Schule',
+        lblLocation: 'Standort', valLocation: 'Karottental',
+        lblColor: 'Lieblingsfarbe', valColor: 'Orange',
+        lblLucky: 'Glückszahl',
+        lblInterest: 'Interesse',
+        sendMsgBtn: '✉️ Nachricht an Benny senden',
+        lockBtn: '🔒 Bennys Konto sperren',
+        lockAccountTitle: 'Konto sperren',
+        guessTitle: 'Errate Bennys Passwort',
+        guessSubtitle: 'Nutze die Hinweise aus Bennys Profil, um sein Passwort herauszufinden und sein Konto endgültig zu sperren!',
+        pwPlaceholder: 'Passwort eingeben…',
+        tryPwBtn: '🔓 Passwort testen',
+        backToProfile: '⬅️ Zurück zu Bennys Profil',
+        accountLocked: 'Konto gesperrt!',
+        successMsg: 'Super Arbeit, Detektiv! 🕵️ Du hast Bennys Passwort erraten und sein Konto gesperrt. Kein Passwort-Diebstahl mehr!',
+        lessonTitle: '🧠 Was haben wir gelernt?',
+        lesson1: 'Verwende niemals deinen Geburtstag, den Namen deines Haustiers oder Lieblingsdinge als Passwort.',
+        lesson2: 'Benutze keine einfachen Zahlen wie 123 oder deine Glückszahl.',
+        lesson3: 'Verwende lange, zufällige Passwörter, die schwer zu erraten sind.',
+        lesson4: 'Mische Großbuchstaben, Kleinbuchstaben, Zahlen und Symbole!',
+        lesson5: 'Verwende für jedes Konto ein anderes Passwort.',
+        lesson6: 'Bitte einen Erwachsenen, dir bei einem Passwort-Manager zu helfen!',
+        playAgain: '🔄 Nochmal spielen',
+        pwStolen: 'Passwort gestohlen!',
+        pwStolenDesc: 'Benny ist auf den Phishing-Trick hereingefallen! Er hat sein echtes Passwort auf einer <strong>gefälschten Webseite</strong> eingegeben. Jetzt können wir sein Konto sperren!',
+        bennysPw: 'Bennys Passwort',
+        phishTitle: '🎣 Was ist Phishing?',
+        phish1: 'Phishing ist, wenn jemand eine <strong>gefälschte Nachricht</strong> mit einem Link zu einer <strong>gefälschten Webseite</strong> schickt.',
+        phish2: 'Die gefälschte Webseite sieht echt aus, aber stiehlt dein Passwort, wenn du es eingibst.',
+        phish3: 'Klicke niemals auf Links von Fremden und gib dein Passwort nicht auf unbekannten Seiten ein.',
+        phish4: 'Überprüfe immer die Webadresse (URL), bevor du Informationen eingibst!',
+        phish5: 'Wenn etwas zu gut klingt, um wahr zu sein, ist es das wahrscheinlich auch!',
+        usePwBtn: '🔒 Passwort verwenden, um Bennys Konto zu sperren',
+        hint1: '💡 Hinweis 1: Denke an Bennys Lieblingsessen… Was isst er am liebsten? 🥕',
+        hint2: '💡 Hinweis 2: Benny hat eine Glückszahl. Schau dir seine Profil-Details an! 🔢',
+        hint3: '💡 Hinweis 3: Kombiniere sein Lieblingsessen und seine Glückszahl! (z.B. etwas + Zahlen) 🤫',
+        wrongAttempt: 'Versuch {n} — Das war\'s nicht! Versuch es nochmal 💪',
+        needClue: 'Brauchst du einen Hinweis?',
+      }
+    };
+
+    function applyLanguage(lang) {
+      currentLang = lang;
+      const t = translations[lang];
+
+      // Update all data-i18n elements
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (t[key]) el.innerHTML = t[key];
+      });
+
+      // Update all data-i18n-placeholder elements
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (t[key]) el.placeholder = t[key];
+      });
+
+      // Update toggle button styles
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+    }
+
+    // Language toggle handler
+    document.getElementById('lang-toggle').addEventListener('click', (e) => {
+      if (e.target.classList.contains('lang-btn')) {
+        applyLanguage(e.target.dataset.lang);
+      }
+    });
+
+    // Apply default language on load
+    applyLanguage('de');
+
     // ==================== Screen Navigation ====================
     const screens = {
       home: document.getElementById('screen-home'),
@@ -1895,6 +2066,11 @@ Click here to play 👉 www.hop-game-free.com
       "💡 Hint 3: Put his favourite food and lucky number together! (e.g. something + numbers) 🤫",
     ];
 
+    function getHint(index) {
+      const t = translations[currentLang];
+      return [t.hint1, t.hint2, t.hint3][index] || hints[index];
+    }
+
     async function sha256(message) {
       const msgBuffer = new TextEncoder().encode(message);
       const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -1936,14 +2112,15 @@ Click here to play 👉 www.hop-game-free.com
       passwordInput.classList.add('error');
       setTimeout(() => passwordInput.classList.remove('error'), 400);
 
-      attemptsCounter.textContent = `Attempt ${attempts} — That's not it! Try again 💪`;
+      const t = translations[currentLang];
+      attemptsCounter.textContent = t.wrongAttempt.replace('{n}', attempts);
       attemptsCounter.style.color = '#ef4444';
 
       if (attempts <= maxHints) {
         hintContainer.innerHTML = `
         <div class="hint-box">
-          <h4>Need a clue?</h4>
-          <p>${hints[attempts - 1]}</p>
+          <h4>${t.needClue}</h4>
+          <p>${getHint(attempts - 1)}</p>
         </div>
       `;
       }
